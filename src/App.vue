@@ -1,17 +1,76 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div 
+      v-if="getResults" id="app">
+    <Graph
+      chartType="line"
+      :seriesNames="['1. open', '4. close']"
+      :results="getResults"
+      @graph-click="handle"
+    />
+    <Modal title="Add Description" :show="getIsOpen" @close="closeModal()" @send="saveData" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios'
+import Graph from './components/organisms/Graph.vue'
+import Modal from './components/molecules/Modal.vue'
+
+const API_KEY = `EJ4FAK9BA9E3ORQ6`
+const API_URL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=${API_KEY}`
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Graph,
+    Modal,
+  },
+  data () {
+    return {
+      results: [],
+      isOpen: false,
+      descriptions: [],
+      currentPoint: {}
+    }
+  },
+  computed: {
+    getResults() {
+        return this.results?.data
+    },
+    getIsOpen() {
+      return this.isOpen
+    }
+  },
+  mounted() {
+    if (localStorage.getItem('descriptions')) {
+      this.descriptions = JSON.parse(localStorage.getItem('descriptions'))
+    }
+    this.getData().then(data => {
+      this.results = this.json(data)
+    })
+  },
+  methods: {
+    getData: () => {
+      return axios.get(API_URL)
+    },
+    json: (data) => {
+        return JSON.parse(JSON.stringify(data))
+    },
+    handle (event) {
+      this.currentPoint = event
+      this.isOpen = true
+    },
+    closeModal() {
+      this.isOpen = false
+    },
+    saveData(event) {
+      if (event) {
+        this.currentPoint.description = event
+        this.descriptions.push(this.currentPoint)
+        localStorage.setItem('descriptions', JSON.stringify(this.descriptions))
+      }
+      this.isOpen = false
+    }
   }
 }
 </script>
