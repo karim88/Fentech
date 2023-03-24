@@ -8,16 +8,15 @@
           </div>
 
           <div class="modal-body">
-              <Input name="description" type="text" id="description" @input-change="getValue" />
-              <button
-                class="modal-default-button"
-                @click="handle"
-              >Send</button>
+            <Input
+              name="description"
+              type="text"
+              id="description"
+              @input-change="getValue"
+            />
+            <button class="modal-default-button" @click="handle">Send</button>
           </div>
-          <button
-            class="modal-close-button"
-            @click="$emit('close')"
-          >X</button>
+          <button class="modal-close-button" @click="$emit('close')">X</button>
         </div>
       </div>
     </div>
@@ -25,36 +24,36 @@
 </template>
 
 <script>
-import Input from '../atoms/Input.vue'
+import Input from "../atoms/Input.vue";
 export default {
-    name: 'Modal',
-    components: {
-        Input
+  name: "Modal",
+  components: {
+    Input,
+  },
+  data() {
+    return {
+      inputValue: "",
+    };
+  },
+  props: {
+    title: {
+      type: String,
+      default: "",
     },
-    data() {
-        return {
-            inputValue: ''
-        }
+    show: {
+      type: Boolean,
+      default: false,
     },
-    props: {
-        title: {
-            type: String,
-            default: ''
-        },
-        show: {
-            type: Boolean,
-            default: false
-        },
+  },
+  methods: {
+    handle() {
+      this.$emit("send", this.inputValue);
     },
-    methods: {
-        handle () {
-            this.$emit('send', this.inputValue);
-        },
-        getValue(event) {
-            this.inputValue = event
-        }
-    }
-}
+    getValue(event) {
+      this.inputValue = event;
+    },
+  },
+};
 </script>
 
 <style>
@@ -98,24 +97,24 @@ export default {
 
 .modal-default-button {
   float: right;
-    color: #fff;
-    font-size: 20px;
-    background-color: #0a550a;
-    padding: 2px 7px;
-    border-radius: 3px;
-    border: 0 solid #000;
+  color: #fff;
+  font-size: 20px;
+  background-color: #0a550a;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 0 solid #000;
 }
 
 .modal-close-button {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    color: #fff;
-    font-size: 20px;
-    background-color: #FA1313;
-    padding: 2px 7px;
-    border-radius: 25px;
-    border: 0 solid #000;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  color: #fff;
+  font-size: 20px;
+  background-color: #fa1313;
+  padding: 2px 7px;
+  border-radius: 25px;
+  border: 0 solid #000;
 }
 .modal-enter-from {
   opacity: 0;

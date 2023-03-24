@@ -1,78 +1,85 @@
 <template>
-  <div 
-      v-if="getResults" id="app">
+  <div v-if="getResults" id="app">
     <Graph
       chartType="line"
       :seriesNames="['1. open', '4. close']"
       :results="getResults"
       @graph-click="handle"
     />
-    <Modal title="Add Description" :show="getIsOpen" @close="closeModal()" @send="saveData" />
+    <List :data="descriptions" />
+    <Modal
+      title="Add Description"
+      :show="getIsOpen"
+      @close="closeModal()"
+      @send="saveData"
+    />
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-import Graph from './components/organisms/Graph.vue'
-import Modal from './components/molecules/Modal.vue'
+import axios from "axios";
+import Graph from "./components/organisms/Graph.vue";
+import Modal from "./components/molecules/Modal.vue";
+import List from './components/molecules/List.vue';
 
-const API_KEY = `EJ4FAK9BA9E3ORQ6`
-const API_URL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=${API_KEY}`
+const API_KEY = `EJ4FAK9BA9E3ORQ6`;
+const API_URL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=${API_KEY}`;
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Graph,
     Modal,
+    List,
   },
-  data () {
+  data() {
     return {
       results: [],
       isOpen: false,
       descriptions: [],
-      currentPoint: {}
-    }
+      currentPoint: {},
+    };
   },
   computed: {
     getResults() {
-        return this.results?.data
+      return this.results?.data;
     },
     getIsOpen() {
-      return this.isOpen
-    }
+      return this.isOpen;
+    },
   },
   mounted() {
-    if (localStorage.getItem('descriptions')) {
-      this.descriptions = JSON.parse(localStorage.getItem('descriptions'))
+    if (localStorage.getItem("descriptions")) {
+      this.descriptions = JSON.parse(localStorage.getItem("descriptions"));
     }
-    this.getData().then(data => {
-      this.results = this.json(data)
-    })
+    this.getData().then((data) => {
+      this.results = this.json(data);
+    });
   },
   methods: {
     getData: () => {
-      return axios.get(API_URL)
+      return axios.get(API_URL);
     },
     json: (data) => {
-        return JSON.parse(JSON.stringify(data))
+      return JSON.parse(JSON.stringify(data));
     },
-    handle (event) {
-      this.currentPoint = event
-      this.isOpen = true
+    handle(event) {
+      this.currentPoint = event;
+      this.isOpen = true;
     },
     closeModal() {
-      this.isOpen = false
+      this.isOpen = false;
     },
     saveData(event) {
       if (event) {
-        this.currentPoint.description = event
-        this.descriptions.push(this.currentPoint)
-        localStorage.setItem('descriptions', JSON.stringify(this.descriptions))
+        this.currentPoint.description = event;
+        this.descriptions.push(this.currentPoint);
+        localStorage.setItem("descriptions", JSON.stringify(this.descriptions));
       }
-      this.isOpen = false
-    }
-  }
-}
+      this.isOpen = false;
+    },
+  },
+};
 </script>
 
 <style>
@@ -83,5 +90,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  padding: 20px;
+  background-color: #ffe;
 }
 </style>
