@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!!series" id="graph">
+  <div v-if="!!series && options.xaxis.categories.length > 0" id="graph">
     <apexchart
       :type="chartType"
       :options="options"
@@ -18,11 +18,15 @@ export default {
   },
   data() {
     return {
-      categories: [],
       options: {
         chart: {
           type: "",
-          events: {},
+          selection: {
+            enabled: true,
+          },
+          zoom: {
+            enabled: false,
+          },
         },
         xaxis: {
           categories: [],
@@ -68,11 +72,11 @@ export default {
   methods: {
     prepareData() {
       const series = this.getData["Time Series (Daily)"];
-      this.categories = Object.keys(series);
+      const categories = Object.keys(series);
       this.options.chart.type = this.chartType;
       this.options.chart.width = this.width;
       this.options.chart.height = this.height;
-      this.options.xaxis.categories = this.categories;
+      this.options.xaxis.categories = categories;
       for (const serieName of this.seriesNames) {
         let series_data = Object.values(series).map((serie) => {
           serie = this.json(serie);
